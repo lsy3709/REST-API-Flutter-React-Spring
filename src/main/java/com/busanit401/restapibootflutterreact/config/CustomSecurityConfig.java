@@ -101,14 +101,23 @@ public class CustomSecurityConfig {
 
         // 1. 접근 권한 설정 (이 부분을 추가하세요)
         http.authorizeHttpRequests(auth -> auth
-                // 회원가입 및 아이디 중복 체크 경로 허용
-                .requestMatchers("/member/register", "/member/check-mid").permitAll()
+                // 1. 스웨거(Swagger) UI 관련 모든 경로 허용
+                .requestMatchers(
+                        "/swagger-ui/**",
+                        "/v3/api-docs/**",
+                        "/swagger-resources/**",
+                        "/webjars/**"
+                ).permitAll()
 
-                // 토큰 생성 및 갱신 경로 허용
+                // 2. 특정 정적 HTML 파일 허용 (/files/apiLogin.html)
+                .requestMatchers("/files/apiLogin.html").permitAll()
+
+                // 3. 기존에 설정했던 회원가입 및 토큰 경로 (유지)
+                .requestMatchers("/member/register", "/member/check-mid").permitAll()
                 .requestMatchers("/generateToken", "/refreshToken").permitAll()
 
-                // 정적 리소스 (HTML, CSS, JS 등) 허용
-                .requestMatchers("/apiLogin.html", "/css/**", "/js/**", "/images/**").permitAll()
+                // 4. 나머지 정적 리소스 (CSS, JS 등)
+                .requestMatchers("/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
 
                 // 그 외 모든 요청은 인증 필요
                 .anyRequest().authenticated()
